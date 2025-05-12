@@ -22,7 +22,7 @@ authorSchema.pre('save', async function () {
   }
 });
 
-// Metodo per confrontare la password inserita con quella salvata
+// Metodo per confrontare la password inserita 
 authorSchema.methods.comparePassword = function (plainPassword) {
   return bcrypt.compare(plainPassword, this.password);
 };
