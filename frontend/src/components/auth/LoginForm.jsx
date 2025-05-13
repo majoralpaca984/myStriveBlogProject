@@ -15,16 +15,20 @@ const LoginForm = () => {
     e.preventDefault();
     setError("");
 
-    const apiUrl = import.meta.env.REACT_APP_API_URL;
+    const apiUrl = process.env.REACT_APP_API_URL; // ✅ CORRETTO per CRA
+    console.log("API URL:", apiUrl); // 🧪 DEBUG: verifica se è undefined
+
     if (!apiUrl) {
-      setError("API URL non configurato. Controlla il file .env.");
+      setError("Variabile REACT_APP_API_URL non trovata. Controlla il file .env.");
       return;
     }
 
     try {
       const response = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(formData),
       });
 
@@ -38,7 +42,7 @@ const LoginForm = () => {
       navigate("/");
     } catch (err) {
       console.error("Errore nel login:", err);
-      setError(err.message || "Errore imprevisto");
+      setError(err.message || "Errore di rete");
     }
   };
 
