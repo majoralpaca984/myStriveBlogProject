@@ -31,8 +31,12 @@ router.get("/:id", async (req, res) => {
 });
 
 // PUT aggiornamento autore
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware, async (req, res) => {
   try {
+    if (req.user.role !== "admin" && req.user._id.toString() !== req.params.id) {
+      return res.status(403).json({ message: "Accesso negato" });
+    }
+
     const updated = await Author.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
@@ -45,7 +49,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE autore
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, checkRole("admin"), async (req, res) => {
   try {
     const deleted = await Author.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ message: "Autore non trovato" });

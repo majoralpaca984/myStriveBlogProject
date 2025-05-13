@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-
+import dotenv from "dotenv";
+dotenv.config();
 
 // Definizione dello schema per gli autori
 
@@ -23,9 +24,11 @@ authorSchema.pre('save', async function () {
 });
 
 // Metodo per confrontare la password inserita 
-authorSchema.methods.comparePassword = function (plainPassword) {
-  return bcrypt.compare(plainPassword, this.password);
+
+authorSchema.methods.comparePassword = function (password) {
+  return bcrypt.compare(password, this.password);
 };
+
 
 
 const Author = mongoose.model("Author", authorSchema);

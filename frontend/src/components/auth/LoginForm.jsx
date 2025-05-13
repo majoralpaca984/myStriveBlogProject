@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -8,27 +7,38 @@ const LoginForm = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
+    const apiUrl = import.meta.env.REACT_APP_API_URL;
+    if (!apiUrl) {
+      setError("API URL non configurato. Controlla il file .env.");
+      return;
+    }
+
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/authors/login`, {
+      const response = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Login fallito");
+
+      if (!response.ok) {
+        throw new Error(data.message || "Login fallito");
+      }
 
       localStorage.setItem("token", data.token);
       navigate("/");
     } catch (err) {
-      setError(err.message);
+      console.error("Errore nel login:", err);
+      setError(err.message || "Errore imprevisto");
     }
   };
 
@@ -36,14 +46,33 @@ const LoginForm = () => {
     <form onSubmit={handleLogin}>
       <div className="form-group">
         <label>Email</label>
-        <input type="email" name="email" className="form-control" onChange={handleChange} required />
+        <input
+          type="email"
+          name="email"
+          className="form-control"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
       </div>
+
       <div className="form-group">
         <label>Password</label>
-        <input type="password" name="password" className="form-control" onChange={handleChange} required />
+        <input
+          type="password"
+          name="password"
+          className="form-control"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
       </div>
+
       {error && <div className="text-danger mt-2">{error}</div>}
-      <button type="submit" className="btn btn-primary mt-3">Login</button>
+
+      <button type="submit" className="btn btn-primary mt-3">
+        Login
+      </button>
     </form>
   );
 };
