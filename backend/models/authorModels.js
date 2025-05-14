@@ -1,9 +1,5 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import dotenv from "dotenv";
-dotenv.config();
-
-// Definizione dello schema per gli autori
 
 const authorSchema = new mongoose.Schema({
   nome: { type: String, required: true },
@@ -11,25 +7,23 @@ const authorSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   dataDiNascita: { type: String },
   avatar: { type: String },
-  password: { type: String,},
-  googleId: { type: String }, 
+  password: { type: String, required: true },
+  googleId: { type: String },
   role: { type: String, enum: ["user", "admin"], default: "user" }
 });
 
-//  Cripta la password prima di salvare
-authorSchema.pre('save', async function () {
-  if (this.isModified('password')) {
-    this.password = await bcrypt.hash(this.password, 10);
+// 🔐 Cripta la password prima del salvataggio
+authorSchema.pre("save", async function () {
+  if (this.isModified("password")) {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
   }
 });
 
-// Metodo per confrontare la password inserita 
-
-authorSchema.methods.comparePassword = function (password) {
-  return bcrypt.compare(password, this.password);
+// metodo per il login
+authorSchema.methods.comparePassword = async function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
 };
-
-
 
 const Author = mongoose.model("Author", authorSchema);
 export default Author;
