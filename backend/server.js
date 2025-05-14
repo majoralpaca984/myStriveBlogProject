@@ -19,7 +19,11 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware globali
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:3000", "https://mystriveblogproject1.vercel.app"],
+  credentials: true,
+}));
+
 app.use(express.json());
 
 // Session & Passport
