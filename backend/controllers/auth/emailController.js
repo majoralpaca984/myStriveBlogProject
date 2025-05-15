@@ -1,5 +1,6 @@
 import sgMail from "@sendgrid/mail";
-import { sendEmail } from "../controllers/auth/emailController.js";
+
+
 import dotenv from "dotenv";
 
 dotenv.config();
