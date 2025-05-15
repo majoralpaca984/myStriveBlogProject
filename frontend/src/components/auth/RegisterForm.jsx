@@ -24,7 +24,7 @@ const RegisterForm = () => {
     setSuccess("");
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/authors/register`, {
+      const response = await fetch(`${import.meta.env.REACT_APP_API_URL}/authors/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
