@@ -24,6 +24,7 @@ const RegisterForm = () => {
     setSuccess("");
 
     try {
+      console.log("forndata", formData);
       const response = await fetch(`${import.meta.env.REACT_APP_API_URL}/authors/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
