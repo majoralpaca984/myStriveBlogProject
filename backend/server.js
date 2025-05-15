@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import session from 'express-session';
 import passport from 'passport';
+import emailRoutes from './routes/email.js';
 
 import googleAuthRoutes from './routes/passportGoogle.js';
 import './config/passport.js';
@@ -15,6 +16,7 @@ import userRoutes from './routes/users.js'; // /me e /:id/avatar
 
 dotenv.config();
 
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -25,6 +27,8 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+app.use ("/email", emailRoutes);
 
 // Session & Passport
 app.use(
