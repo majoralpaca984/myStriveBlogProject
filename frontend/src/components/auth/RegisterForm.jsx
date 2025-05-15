@@ -1,7 +1,6 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import GoogleLoginButton from "./GoogleLoginButton";  
+import GoogleLoginButton from "./GoogleLoginButton"; // opzionale se usi Google login
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -15,7 +14,11 @@ const RegisterForm = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleRegister = async (e) => {
@@ -24,18 +27,26 @@ const RegisterForm = () => {
     setSuccess("");
 
     try {
-      console.log("forndata", formData);
-      const response = await fetch(`${import.meta.env.REACT_APP_API_URL}/authors/register`, {
+      console.log("Form data:", formData);
+      console.log("API URL:", process.env.REACT_APP_API_URL); 
+
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/authors/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Registrazione fallita");
+      const data = await response.json();
+      console.log("Response:", data);
+
+      if (!response.ok) {
+        throw new Error(data.message || "Registrazione fallita");
+      }
 
       setSuccess("Registrazione completata! Verrai reindirizzato al login...");
       setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
+      console.error("Errore nella registrazione:", err);
       setError(err.message);
     }
   };
@@ -58,13 +69,15 @@ const RegisterForm = () => {
         <label>Password</label>
         <input type="password" name="password" className="form-control" onChange={handleChange} required />
       </div>
+
       {error && <div className="text-danger mt-2">{error}</div>}
       {success && <div className="text-success mt-2">{success}</div>}
+
       <button type="submit" className="btn btn-success mt-3">Registrati</button>
+
       <hr />
       <p className="text-center">oppure</p>
-      <GoogleLoginButton />
-
+      <GoogleLoginButton /> {/* Se hai implementato il login Google */}
     </form>
   );
 };
